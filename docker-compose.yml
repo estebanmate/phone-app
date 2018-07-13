@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+
+  mongodb-catalog-service-db:
+    container_name: mongodb-catalog-service
+    image: mongo
+    command: mongod --port 27019
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    ports:
+      - "27019:27019"
+
+  catalog-service:
+    build: catalog-service
+    restart: always
+    container_name: catalog-service-app
+    ports:
+      - "8087:8087"
+    links:
+      - mongodb-catalog-service-db
+      
+  mongodb-order-service-db:
+    container_name: mongodb-order-service
+    image: mongo
+    command: mongod --port 27018
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    ports:
+      - "27018:27018"
+
+  order-service:
+    build: order-service
+    container_name: order-service-app
+    ports:
+      - "8088:8088"
+    links:
+      - mongodb-order-service-db
